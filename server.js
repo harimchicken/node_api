@@ -6,7 +6,24 @@
 // 5. , 는 그리고 라고 해석한다.
 
 const express = require('express')
+const morgan = require('morgan')
+const bodyParser = require('body-parser')
 const app = express()
+
+const productRoute = require('./route/product')
+const oruderRoute = require('./route/order')
+
+require('./utils/database')
+require('dotenv').config()
+
+// middleware
+app.use(morgan('dev'))
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false}))
+
+// Routing
+app.use('/product', productRoute)
+app.use('/order', oruderRoute)
 
 
 const PORT = 7000;
