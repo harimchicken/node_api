@@ -15,7 +15,15 @@ router.get('/', (req, res) => {
         .then(results => {
             res.json({
                 count: results.length,
-                products: results
+                products: results.map(result => {
+                    return {
+                        id: result._id,
+                        name: result.name,
+                        price: result.price,
+                        category: result.category,
+                        createdAT: result.createdAt
+                    }
+                })
             })
         })
         .catch(err => {
