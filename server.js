@@ -12,6 +12,7 @@ const app = express()
 
 const productRoute = require('./route/product')
 const oruderRoute = require('./route/order')
+const userRoute = require('./route/user')
 
 require('./utils/database')
 require('dotenv').config()
@@ -24,6 +25,7 @@ app.use(bodyParser.urlencoded({ extended: false}))
 // Routing
 app.use('/product', productRoute)
 app.use('/order', oruderRoute)
+app.use('/user', userRoute)
 
 
 const PORT = 7000;
