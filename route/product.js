@@ -2,144 +2,33 @@
 const express = require("express")
 const router = express.Router()
 
-const productModel = require('../models/product')
-
+const checkAuth = require("../middleware/check-auth")
 
 // 2
+const {
+    products_get_all,
+    products_get_product,
+    products_post_product,
+    products_update_product,
+    products_delete_product
+} = require('../controllers/product')
 
 // product 전체를 불러오는 API
-router.get('/', (req, res) => {
-    
-    productModel
-        .find()
-        .then(results => {
-            res.json({
-                count: results.length,
-                products: results.map(result => {
-                    return {
-                        id: result._id,
-                        name: result.name,
-                        price: result.price,
-                        category: result.category,
-                        createdAT: result.createdAt
-                    }
-                })
-            })
-        })
-        .catch(err => {
-            res.status(500).json({
-                err :err.message
-            })
-        })
+router.get('/', products_get_all) 
 
-    // res.json({
-    //     msg: "product get"
-    // })
-}) 
-
+// 로그인한 사람만 허용가능한 API
 // product 상세 정보를 불러오는 API
-router.get('/:id', (req, res) => {
-
-    const id = req.params.id
-
-    productModel
-        .findById(id)
-        .then(product => {
-            if (!product) {
-                res.json({
-                    msg: "no product"
-                })
-            } else {
-                res.json(product)
-            }
-        })
-        .catch(err => {
-            res.status(500).json({
-                err: err.message
-            })
-        })
-})
+router.get('/:id', checkAuth, products_get_product)
 
 
 // product 등록하는 API
-router.post('/register', (req, res) => {
-    
-    const newProduct = new productModel({
-        name: req.body.productName,
-        price: req.body.productPrice,
-        category: req.body.category
-    })
-
-    newProduct
-        .save()
-        .then(result => {
-            res.json({
-                msg: "saved product",
-                productInfo: result
-            })
-        })
-        .catch(err => {
-            res.status(500).json({
-                err: err.message
-            })
-        })
-
-    // res.json({
-    //     msg: "product registered",
-    //     productInfo: newProduct
-    // })
-   
-})
+router.post('/register', checkAuth, products_post_product)
 
 // product 수정하는 API
-router.put('/:id', (req, res) => {
-    
-    const id = req.params.id
-
-    productModel
-        .findByIdAndUpdate(id, {
-            name: req.body.productName,
-            price: req.body.productPrice,
-            category: req.body.category
-        })
-        .then(result => {
-            res.json({
-                msg: "updated product at " + id
-            })
-        })
-        .catch(err => {
-            res.status(500).json({
-                err: err.message
-            })
-        })
-
-    // res.json({
-    //     msg: "updated product"
-    // })
-})
+router.put('/:id', checkAuth, products_update_product)
 
 // product 삭제하는 API
-router.delete('/:id', (req, res) => {
-    
-    const id = req.params.id
-
-    productModel
-        .findByIdAndDelete(id)
-        .then(result => {
-            res.json({
-                msg: "deleted product at " + id
-            })
-        })
-        .catch(err => {
-            res.status(500).json({
-                err: err.message
-            })
-        })
-
-    // res.json({
-    //     msg: "deleted product"
-    // })
-})
+router.delete('/:id', checkAuth, products_delete_product)
 
 
 

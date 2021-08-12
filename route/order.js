@@ -1,89 +1,31 @@
 // 1
 const express = require("express")
 const router = express.Router()
-const orderModel = require('../models/order')
+
+const checkAuth = require("../middleware/check-auth")
 
 // 2
+const {
+    orders_get_all,
+    orders_post_order,
+    orders_update_order,
+    orders_delete_order,
+} = require('../controllers/order')
 
 // order 전체를 불러오는 API
-router.get('/', (req, res) => {
-    
-    orderModel
-        .find()
-        .populate('product')
-        .then(results => {
-            res.json(results)
-        })
-        .catch(err => {
-            res.status(500).json({
-                err: err.message
-            })
-        })
-
-        // res.json({
-        //     msg: "order get"
-        // })
-}) 
+router.get('/', orders_get_all) 
 
 
 
 
 // order 등록하는 API
-router.post('/', (req, res) => {
-   
-    const newOrder = new orderModel ({
-        product: req.body.productId,
-        quantity: req.body.qty
-    })
-
-    newOrder
-        .save()
-        .then(result => {
-            res.json({
-                msg: "Order stored",
-                createdOrder: result
-            })
-        })
-        .catch(err => {
-            res.status(500).json({
-                err: err.message
-            })
-        })
-
-        // res.json({
-        //     msg: "order registered"
-        // })
-})
+router.post('/', checkAuth, orders_post_order)
 
 // order 수정하는 API
-router.put('/', (req, res) => {
-    res.json({
-        msg: "updated order"
-    })
-})
+router.put('/', checkAuth, orders_update_order)
 
 // order 삭제하는 API
-router.delete('/:id', (req, res) => {
-    
-    const id = req.params.id
-
-    orderModel
-        .findByIdAndDelete(id)
-        .then(result => {
-            res.json({
-                msg: "deleted order at " + id
-            })
-        })
-        .catch(err => {
-            res.status(500).json({
-                err: err.message
-            })
-        })
-
-        // res.json({
-        //     msg: "deleted order"
-        // })
-})
+router.delete('/:id', checkAuth, orders_delete_order)
 
 
 
