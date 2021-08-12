@@ -1,15 +1,28 @@
 // 1
 const express = require("express")
 const router = express.Router()
-
+const orderModel = require('../models/order')
 
 // 2
 
 // order 전체를 불러오는 API
 router.get('/', (req, res) => {
-    res.json({
-        msg: "order get"
-    })
+    
+    orderModel
+        .find()
+        .populate('product')
+        .then(results => {
+            res.json(results)
+        })
+        .catch(err => {
+            res.status(500).json({
+                err: err.message
+            })
+        })
+
+        // res.json({
+        //     msg: "order get"
+        // })
 }) 
 
 
@@ -17,9 +30,29 @@ router.get('/', (req, res) => {
 
 // order 등록하는 API
 router.post('/', (req, res) => {
-    res.json({
-        msg: "order registered"
+   
+    const newOrder = new orderModel ({
+        product: req.body.productId,
+        quantity: req.body.qty
     })
+
+    newOrder
+        .save()
+        .then(result => {
+            res.json({
+                msg: "Order stored",
+                createdOrder: result
+            })
+        })
+        .catch(err => {
+            res.status(500).json({
+                err: err.message
+            })
+        })
+
+        // res.json({
+        //     msg: "order registered"
+        // })
 })
 
 // order 수정하는 API
@@ -30,10 +63,26 @@ router.put('/', (req, res) => {
 })
 
 // order 삭제하는 API
-router.delete('/', (req, res) => {
-    res.json({
-        msg: "deleted order"
-    })
+router.delete('/:id', (req, res) => {
+    
+    const id = req.params.id
+
+    orderModel
+        .findByIdAndDelete(id)
+        .then(result => {
+            res.json({
+                msg: "deleted order at " + id
+            })
+        })
+        .catch(err => {
+            res.status(500).json({
+                err: err.message
+            })
+        })
+
+        // res.json({
+        //     msg: "deleted order"
+        // })
 })
 
 
