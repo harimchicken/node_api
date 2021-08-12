@@ -4,24 +4,26 @@ const jwt = require('jsonwebtoken')
 
 exports.users_post_signup = (req, res) => {
 
+    const {username, email, password} = req.body
+
     // 기존에 가입 또는 사용중인 메일이 있는지 등록 여부 확인 => 패스워드 암호화 => 디비에 저장
     userModel
-        .findOne( {email: req.body.email})
+        .findOne( {email})
         .then(user => {
             if (user) {
                 return res.status(400).json({
                     err: "기존에 등록된 이메일이 있습니다, 다른 이메일로 가입 바랍니다."
                 })
             } else {
-                bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
+                bcrypt.hash(password, 10, (err, hashedPassword) => {
                     if (err) {
                         return res.status(404).json({
                             error: err
                         })
                     } else {
                         const newUser = new userModel({
-                            username: req.body.username,
-                            email: req.body.email,
+                            username,
+                            email,
                             password: hashedPassword
                         })
             
@@ -47,9 +49,11 @@ exports.users_post_signup = (req, res) => {
 
 exports.users_post_login = (req, res) => {
 
+    const {email, password} = req.body
+
     // 회원가입 여부
     userModel
-        .findOne( {email: req.body.email})
+        .findOne( {email})
         .then(user => {
             if (!user) {
                 return res.status(404).json({
@@ -57,7 +61,7 @@ exports.users_post_login = (req, res) => {
                 })
             } else {
                 // 이메일, 또는 아이디가 있을시 => 패스워드 매칭
-                bcrypt.compare(req.body.password, user.password, (err, matched) => {
+                bcrypt.compare(password, user.password, (err, matched) => {
                     if (err || matched === false) {
                         return res.status(401).json({
                             msg: "비밀번호가 틀렸습니다."

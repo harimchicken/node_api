@@ -53,10 +53,11 @@ exports.products_get_product = (req, res) => {
 
 exports.products_post_product = (req, res) => {
     
+    const {name, price, category} = req.body
     const newProduct = new productModel({
-        name: req.body.productName,
-        price: req.body.productPrice,
-        category: req.body.category
+        name,
+        price,
+        category
     })
 
     newProduct

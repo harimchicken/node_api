@@ -21,9 +21,10 @@ exports.orders_get_all = (req, res) => {
 
 exports.orders_post_order = (req, res) => {
    
+    const {product, quantity} = req.body
     const newOrder = new orderModel ({
-        product: req.body.productId,
-        quantity: req.body.qty
+        product,
+        quantity
     })
 
     newOrder
