@@ -72,7 +72,7 @@ exports.users_post_login = (req, res) => {
                         const token = jwt.sign(
                             
                                 {email: user.email, userId: user._id},
-                                "harimlee",
+                                process.env.SECRET_KEY,
                                 {expiresIn: '1h'}
                             )
                         res.json({

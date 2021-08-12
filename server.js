@@ -5,6 +5,8 @@
 // 4. () 함수들의 모음을 표시한다.
 // 5. , 는 그리고 라고 해석한다.
 
+require('dotenv').config()
+
 const express = require('express')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
@@ -15,7 +17,6 @@ const oruderRoute = require('./route/order')
 const userRoute = require('./route/user')
 
 require('./utils/database')
-require('dotenv').config()
 
 // middleware
 app.use(morgan('dev'))
@@ -28,7 +29,7 @@ app.use('/order', oruderRoute)
 app.use('/user', userRoute)
 
 
-const PORT = 7000;
+const PORT = process.env.PORT || 8000;
 
 
 
